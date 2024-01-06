@@ -7,8 +7,33 @@ const $submitButton = document.getElementById('submit')
 const $sideRoom = document.querySelector('#sidebar h1')
 const $sideUsername = document.querySelector('#sidebar h3')
 const $usersList = document.querySelector('#sidebar ul')
-console.log($usersList)
 
+
+// const autoScroll = () => {
+//     // New message element
+//     const $newMessage = $messages.lastElementChild
+
+//     // Height of the new message
+//     const newMessageStyles = getComputedStyle($newMessage)
+//     const newMessageMargin = parseInt(newMessageStyles.marginBottom)
+//     const newMessageHeight = $newMessage.offsetHeight + newMessageMargin
+
+//     // Visible height
+//     const visibleHeight = $messages.offsetHeight
+
+//     // Height of messages container
+//     const containerHeight = $messages.scrollHeight
+
+//     // How far have I scrolled?
+//     const scrollOffset = $messages.scrollTop + visibleHeight
+
+//     if (containerHeight - newMessageHeight <= scrollOffset) {
+//         $messages.scrollTop = $messages.scrollHeight
+//     }
+// }
+const autoScroll = ()=>{
+        $messages.scrollTop = $messages.scrollHeight;
+    }
 
 const {username, room} =  Qs.parse(location.search, {ignoreQueryPrefix: true})
 socket.emit('join', {username, room})
@@ -62,12 +87,34 @@ socket.on('chat message', (msg, sender)=>{
     messageItem.classList.add('message')
     messageItem.innerHTML = item
     $messages.appendChild(messageItem)
+    autoScroll()
 })
 
-socket.on('connected users', ({ connectedUsers })=>{
-    for (const user of connectedUsers) {
+socket.on('new user to the list', ( {username, id} )=>{
         const li = document.createElement('li')
-        li.textContent = user.username
+        li.setAttribute('id', `${id}`)
+        li.textContent = username
         $usersList.appendChild(li)
+})
+socket.on('list connected users', (users)=>{
+    for (const user of users) {
+        if (socket.id == user.id) {
+            $sideUsername.textContent = user.username
+            $sideRoom.textContent = user.room
+        } else {
+            const li = document.createElement('li')
+            li.setAttribute('id', `${user.id}`)
+            li.textContent = user.username
+            $usersList.appendChild(li)
+        }
+        
     }
+})
+
+socket.on('remove from list', (id)=>{
+    const item = document.getElementById(id)
+    if (!item) {
+        return//do nothing
+    } 
+    item.remove()
 })

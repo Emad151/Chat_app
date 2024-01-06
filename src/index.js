@@ -45,8 +45,11 @@ io.on('connection', (socket)=>{
             return console.log(error)
         }
         socket.join(user.room)
+        socket.broadcast.to(user.room).emit('new user to the list', user)
+        socket.emit('list connected users', getUsersInRoom(user.room))
         socket.emit('chat message', generateMessage(`Welcome ${user.username}`), '')
-        socket.broadcast.to(joinInfo.room).emit('chat message', generateMessage(`${user.username} joined`), '')
+        socket.broadcast.to(user.room).emit('chat message', generateMessage(`${user.username} joined`), '')
+
     })
     
     socket.on('chat message', (msgText)=>{
@@ -62,6 +65,7 @@ io.on('connection', (socket)=>{
     socket.on('disconnect', ()=>{
         const user = removeUser(socket.id)
         socket.broadcast.to(user.room).emit('chat message',generateMessage(`${user.username} has left the room`), '')
+        socket.broadcast.to(user.room).emit('remove from list', user.id)
     })
 })
 
