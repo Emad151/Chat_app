@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <title>Chat app</title>
+</head>
+<body>
+  <div id="sidebar">
+    <h1 id="side_room"></h1>
+    <h3 id="side_username"></h3>
+    <ul></ul>
+  </div>
+  
+  <div id="chat-container">
+    <div id="messages" class="chat_messages"></div>
+    <form id="form" action="">
+      <input name="message" id="input" autocomplete="off" placeholder="Write a message" required/>
+      <button name="submit" type="submit" id="submit" disabled>Send</button>
+      <button type="button" id="location">Share my location</button>
+    </form>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/chat.js"></script>
+</body>
+</html>

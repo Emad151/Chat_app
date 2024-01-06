@@ -1,0 +1,22 @@
+{
+  "name": "chat_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "env-cmd -f ./config/dev.env nodemon -e js,hbs,css src/index",
+    "start": "node src/index"
+  },
+  "author": "Emad Melad",
+  "license": "ISC",
+  "devDependencies": {
+    "env-cmd": "^10.1.0",
+    "nodemon": "^3.0.2"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "hbs": "^4.2.0",
+    "moment": "^2.30.1",
+    "socket.io": "^4.7.2"
+  }
+}
