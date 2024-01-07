@@ -23,8 +23,13 @@ app.get('/nameSearch/:room/:username', (req,res)=>{
     })
 })
 app.get('/chat', (req, res) => {
-    const {username, room} = req.query
-    res.render('chat', {username, room})
+    try {
+        const {username, room} = req.query
+        res.render('chat', {username, room})
+    } catch (error) {
+        console.log(error)
+    }
+    
 })
 
 //express usually does this operation by default, however we
@@ -34,38 +39,57 @@ const server = http.createServer(app)
 const io = new socketIo.Server(server)
 
 io.on('connection', (socket)=>{
-    console.log('new connection')
-    socket.on('join', (joinInfo)=>{
-        const {user, error} = addUser({
-            id:socket.id,
-            username: joinInfo.username,
-            room: joinInfo.room
-        }) 
-        if (error) {
-            return console.log(error)
+       socket.on('join', (joinInfo)=>{
+        try {
+            const {user, error} = addUser({
+                id:socket.id,
+                username: joinInfo.username,
+                room: joinInfo.room
+            }) 
+            if (error) {
+                return console.log(error)
+            }
+            socket.join(user.room)
+            socket.broadcast.to(user.room).emit('new user to the list', user)
+            socket.emit('list connected users', getUsersInRoom(user.room))
+            socket.emit('chat message', generateMessage(`Welcome ${user.username}`), '')
+            socket.broadcast.to(user.room).emit('chat message', generateMessage(`${user.username} joined`), '')
+        } catch (error) {
+            console.log(error)
         }
-        socket.join(user.room)
-        socket.broadcast.to(user.room).emit('new user to the list', user)
-        socket.emit('list connected users', getUsersInRoom(user.room))
-        socket.emit('chat message', generateMessage(`Welcome ${user.username}`), '')
-        socket.broadcast.to(user.room).emit('chat message', generateMessage(`${user.username} joined`), '')
+        
 
     })
     
     socket.on('chat message', (msgText)=>{
-        const user = getUser(socket.id)
-        io.to(user.room).emit('chat message', generateMessage(msgText), user.username)
+        try {
+            const user = getUser(socket.id)
+            io.to(user.room).emit('chat message', generateMessage(msgText), user.username)
+        } catch (error) {
+            console.log(error)
+        }
+        
     })
     socket.on('my location', (coords, callback)=>{
-        const user = getUser(socket.id)
-        const location = `<a href="https://www.google.com/maps?q=${coords.latitude},${coords.longitude}" target="_blank">My Location</a>`
-        io.to(user.room).emit('chat message', generateMessage(location), user.username)
-        callback()
+        try {
+            const user = getUser(socket.id)
+            const location = `<a href="https://www.google.com/maps?q=${coords.latitude},${coords.longitude}" target="_blank">My Location</a>`
+            io.to(user.room).emit('chat message', generateMessage(location), user.username)
+            callback()
+        } catch (error) {
+            console.log(error)
+        }
+        
     })
     socket.on('disconnect', ()=>{
-        const user = removeUser(socket.id)
-        socket.broadcast.to(user.room).emit('chat message',generateMessage(`${user.username} has left the room`), '')
-        socket.broadcast.to(user.room).emit('remove from list', user.id)
+        try {
+            const user = removeUser(socket.id)
+            socket.broadcast.to(user.room).emit('chat message',generateMessage(`${user.username} has left the room`), '')
+            socket.broadcast.to(user.room).emit('remove from list', user.id)
+        } catch (error) {
+            console.log(error)
+        }
+        
     })
 })
 

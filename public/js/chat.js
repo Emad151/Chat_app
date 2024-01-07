@@ -59,7 +59,7 @@ socket.on('chat message', (msg, sender)=>{
                         <span class="message_name">${sender}</span>
                         <span class="message_meta">${msg.createdAt}</span>
                      </p>
-                     <p>${msg.text}</p>`
+                     <p class="message_text">${msg.text}</p>`
 
     const messageItem = document.createElement('div')
     messageItem.classList.add('message')
