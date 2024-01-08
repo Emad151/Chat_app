@@ -3,7 +3,7 @@ const http = require('http')
 const socketIo = require('socket.io')
 const path = require('path')
 const app = express()
-const port = process.env.port
+const port = process.env.PORT || 3000
 const {generateMessage} = require('./utils/messages')
 const {addUser, removeUser, getUser, getUsersInRoom, checkExistence} = require('./utils/users')
 
