@@ -87,7 +87,7 @@ io.on('connection', (socket)=>{
             socket.broadcast.to(user.room).emit('chat message',generateMessage(`${user.username} has left the room`), '')
             socket.broadcast.to(user.room).emit('remove from list', user.id)
         } catch (error) {
-            console.log(error)
+            console.log(error.message)
         }
         
     })
